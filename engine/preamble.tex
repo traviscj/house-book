@@ -1,0 +1,107 @@
+% House book preamble (XeLaTeX). gen_rental.py fills the @@...@@ placeholders.
+\documentclass[10pt,letterpaper,oneside,openany,headings=small,parskip=half-]{scrbook}
+\usepackage[top=0.7in,bottom=0.75in,inner=0.75in,outer=0.75in,headsep=10pt,footskip=24pt]{geometry}
+\usepackage{fontspec}
+% macOS faces when present, TeX Gyre (ships with TeX Live; loaded by file name) everywhere else.
+% HOUSEBOOK_PORTABLE_FONTS=1 forces TeX Gyre (freely redistributable) even when the macOS faces exist.
+\newif\ifportable@@PORTABLE@@
+\newcommand{\HBIfFont}[3]{\ifportable#3\else\IfFontExistsTF{#1}{#2}{#3}\fi}
+\HBIfFont{Iowan Old Style}{%
+  \setmainfont{Iowan Old Style}[Numbers={OldStyle,Proportional}]
+  \newfontfamily\displayfont{Iowan Old Style}[Numbers=Lining]}{%
+  \setmainfont{texgyrepagella}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic,Numbers={OldStyle,Proportional}]
+  \newfontfamily\displayfont{texgyrepagella}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic,Numbers=Lining]}
+\HBIfFont{Avenir Next Condensed}{%
+  \setsansfont{Avenir Next Condensed}[UprightFont=* Medium,BoldFont=* Demi Bold,ItalicFont=* Medium Italic,BoldItalicFont=* Demi Bold Italic]
+  \newfontfamily\numfont{Avenir Next Condensed}[UprightFont=* Medium,BoldFont=* Demi Bold,Numbers={Lining,Monospaced}]}{%
+  \setsansfont{texgyreheroscn}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+  \newfontfamily\numfont{texgyreheroscn}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic,Numbers={Lining,Monospaced}]}
+\HBIfFont{Menlo}{\setmonofont{Menlo}[Scale=0.84]}{\setmonofont{texgyrecursor}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic,Scale=0.9]}
+\usepackage{microtype}
+\usepackage[table,dvipsnames]{xcolor}
+\definecolor{ink}{HTML}{16181D}
+\definecolor{brick}{HTML}{9B2C1C}
+\definecolor{slate}{HTML}{4A5563}
+\definecolor{rule}{HTML}{C9CDD3}
+\definecolor{wash}{HTML}{F3F1EC}
+\definecolor{okg}{HTML}{2E7D32}
+\definecolor{amb}{HTML}{B26A00}
+\definecolor{bad}{HTML}{B3261E}
+\color{ink}
+\usepackage{graphicx,booktabs,tabularx,longtable,array,multirow,makecell,ragged2e,enumitem,calc}
+\usepackage{tikz,pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{positioning,calc,shapes.misc,decorations.pathreplacing}
+\usepackage[most]{tcolorbox}
+\usepackage{scrlayer-scrpage}
+\usepackage[hidelinks,pdfusetitle,bookmarksnumbered]{hyperref}
+\hypersetup{pdftitle={@@PDFTITLE@@},pdfauthor={@@AUTHOR@@}}
+\usepackage{subcaption}
+\usepackage{pdfpages}
+\usepackage[font={small,sf},labelfont={bf,color=brick},labelsep=period,skip=3pt]{caption}
+
+% ---- headings
+\addtokomafont{disposition}{\sffamily\bfseries\color{ink}}
+\addtokomafont{chapter}{\Huge}
+\addtokomafont{section}{\Large\color{brick}}
+\addtokomafont{subsection}{\large}
+\RedeclareSectionCommand[beforeskip=0pt,afterskip=14pt]{chapter}
+\RedeclareSectionCommand[beforeskip=12pt,afterskip=4pt]{section}
+\RedeclareSectionCommand[beforeskip=8pt,afterskip=2pt]{subsection}
+\renewcommand*{\chapterformat}{\textcolor{brick}{\thechapter}\enskip\textcolor{rule}{/}\enskip}
+\renewcommand*{\chapterlinesformat}[3]{\parbox[b]{\linewidth}{#2#3\par\vspace{-2pt}{\color{brick}\rule{\linewidth}{1.2pt}}}}
+\clearpairofpagestyles
+\ihead{\sffamily\small\color{slate}@@HEAD@@}
+\ohead{\sffamily\small\color{slate}\leftmark}
+\ofoot{\sffamily\small\numfont\pagemark}
+\ifoot{\sffamily\scriptsize\color{slate}\EDNAME{} \textbullet{} \EDITION}
+\setlength{\headheight}{14pt}
+\renewcommand*{\chaptermarkformat}{}
+\automark{chapter}
+
+\setlist{nosep,leftmargin=1.2em}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\newcommand{\EDITION}{@@ASOF@@}
+
+% ---- tables: dense, sans, zebra
+\newenvironment{dtab}{\sffamily\footnotesize\rowcolors{2}{wash}{white}}{}
+\newcommand{\thd}[1]{\textcolor{slate}{\bfseries\MakeUppercase{#1}}}
+\newcommand{\money}[1]{{\numfont #1}}
+\newcommand{\num}[1]{{\numfont #1}}
+\newcommand{\src}[1]{{\color{slate}\scriptsize\sffamily [#1]}}
+
+% ---- status pills
+\newcommand{\pill}[2]{\tikz[baseline=(p.base)]\node[fill=#1,text=white,rounded corners=1.5pt,inner xsep=2.5pt,inner ysep=1pt,font=\sffamily\bfseries\tiny](p){\strut#2};}
+\newcommand{\ACTIVE}{\pill{okg}{ACTIVE}}
+\newcommand{\SOON}{\pill{amb}{EXPIRING}}
+\newcommand{\EXPIRED}{\pill{bad}{EXPIRED}}
+\newcommand{\UNKNOWN}{\pill{slate}{UNKNOWN}}
+\newcommand{\HAVE}{\pill{okg}{ON FILE}}
+\newcommand{\MISSING}{\pill{bad}{MISSING}}
+\newcommand{\PARTIAL}{\pill{amb}{PARTIAL}}
+\newcommand{\ASK}{\pill{brick}{@@ASK@@}}
+
+% ---- project header strip: {title}{vendor}{date}{cost}{invoice-status}
+\newtcolorbox{projbox}[1]{enhanced,breakable,colback=white,colframe=rule,boxrule=0.5pt,arc=1pt,
+  left=6pt,right=6pt,top=4pt,bottom=4pt,
+  title={\sffamily\bfseries #1},coltitle=white,colbacktitle=ink,attach boxed title to top left={yshift=-2pt},
+  boxed title style={arc=1pt,boxrule=0pt}}
+\newcommand{\kv}[2]{{\sffamily\scriptsize\color{slate}\MakeUppercase{#1}}\,{\sffamily\small #2}}
+\newcommand{\projmeta}[5]{\par\noindent\kv{Vendor}{#1}\hfill\kv{Completed}{\numfont #2}\hfill\kv{Cost}{\numfont #3}\hfill\kv{Warranty}{#4}\hfill\kv{Paperwork}{#5}\par\vspace{2pt}{\color{rule}\hrule}\vspace{3pt}}
+
+% ---- quirk box: {title}{symptom}{cause}{fix}{when/source}
+\newtcolorbox{qbox}[2][]{enhanced,breakable,colback=wash,colframe=brick,boxrule=0pt,leftrule=2.5pt,arc=0pt,
+  left=6pt,right=6pt,top=3pt,bottom=3pt,fontupper=\small,
+  title={\sffamily\bfseries\color{brick}#2},coltitle=brick,colbacktitle=wash,titlerule=0pt,toptitle=2pt,bottomtitle=0pt,#1}
+\newcommand{\quirk}[5]{\begin{qbox}{#1}
+  \begin{tabularx}{\linewidth}{@{}>{\sffamily\scriptsize\color{slate}}l X@{}}
+  SYMPTOM & #2\\ CAUSE & #3\\ FIX & #4\\
+  \end{tabularx}\par\hfill\src{#5}\end{qbox}}
+
+% ---- photos
+\newcommand{\photo}[3][0.49]{\begin{minipage}[t]{#1\linewidth}\centering\includegraphics[width=\linewidth,height=0.62\linewidth,keepaspectratio]{#2}\par\vspace{1pt}{\sffamily\scriptsize\color{slate}\RaggedRight #3\par}\end{minipage}}
+\graphicspath{{../photos/print/}{../docs/thumbs/}}
+
+% ---- panel-directory badge (print-safe: outline, no fill)
+\newcommand{\pbadge}[1]{\tikz[baseline=(b.base)]\node[draw=ink,line width=0.5pt,rounded corners=1pt,inner xsep=1.5pt,inner ysep=0.5pt,font=\sffamily\bfseries\tiny](b){\strut#1};}

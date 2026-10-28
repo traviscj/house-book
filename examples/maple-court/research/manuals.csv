@@ -1,0 +1,8 @@
+file,system,equipment,maker,model,doc_type,source_url,pages,model_match,notes
+hvac__carrier-59SC5__installation.pdf,HVAC,Zone 2 furnace,Carrier,59SC5A060,installation,,52,exact,
+hvac__carrier-59TP5__owner.pdf,HVAC,Zone 1 furnace,Carrier,59TP5A080,owner's manual,,16,family,
+hvac__carrier-24ACC6__installation.pdf,HVAC,Both condensers,Carrier,24ACC6,installation,,24,family,
+power__generac-guardian__owner.pdf,Electrical,Standby generator,Generac,Guardian 22 kW,owner's manual,,60,likely,
+power__generac-rtsw100__installation.pdf,Electrical,Transfer switch,Generac,100 A ATS,installation,,28,unconfirmed,read the ATS nameplate
+plumbing__bradford-white-power-vent__installation.pdf,Plumbing,Water heater,Bradford White,40-gal power vent,installation,,44,family,
+plumbing__zoeller-M53__owner.pdf,Plumbing,Sump pump,Zoeller,M53,owner's manual,,8,exact,

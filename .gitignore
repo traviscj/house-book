@@ -1,0 +1,10 @@
+__pycache__/
+.DS_Store
+# generated per house
+examples/*/tex/
+examples/*/out/
+examples/*/photos/print/
+examples/*/photos/web/
+examples/*/photos/publish/
+# your own houses: keep them out of this repo (or in a private one)
+houses/
